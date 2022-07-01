@@ -14,6 +14,16 @@
   - [Tipos `void`, `null`, `undefined`](#los-tipos-void-null-y-undefined)
 - [Tipo Enumeracion](#el-tipo-de-enumeración)
   - [Crear Enumeracion](#creación-de-una-enumeración)
+- [Tipos `any` y `unknown`](#tipos-any-y-unknown-en-typescript)
+  - [Tipo `any`](#any-tipo)
+  - [Tipo `unknown`](#tipo-unknown)
+  - [Asercion de tipos](#aserción-de-tipos)
+  - [Restriccion de tipos](#restricciones-de-tipos)
+- [Tipos de unión e intersección](#tipos-de-unión-e-intersección-en-typescript)
+  - [Tipos de unión](#tipos-de-unión)
+  - [Tipos de intersección](#tipos-de-intersección)
+- [Tipos literales](#tipos-literales)
+  - [Definición de tipos literales](#definición-de-tipos-literales)
 
 ## Ejercicio: Inferencia de tipo en TypeScript
 
@@ -190,3 +200,235 @@ Las enumeraciones permiten especificar una lista de opciones disponibles. Son mu
     ```
 
 8. Ejecute el código. Observe que se muestra el valor **Temp**, que es el nombre de la enumeración para **Temp** o 2.
+
+## Tipos `any` y `unknown` en TypeScript
+
+Hay ocasiones en las que necesitará trabajar con valores que son desconocidos en el momento de desarrollar el código o que son de un rango posible reducido de tipos de valor. En estos casos, puede usar los tipos any y unknown, así como usar la aserción de tipos y las restricciones de tipos para mantener el control sobre lo que el código puede hacer con los valores que se pasan.
+
+### `any` tipo
+
+`any` es un tipo que puede representar cualquier valor de JavaScript sin restricciones. Esto puede ser útil si se espera un valor de una biblioteca de terceros o entradas de usuario en las que el valor es dinámico, ya que el tipo any permitirá volver a asignar distintos tipos de valores. Y, tal como se ha mencionado anteriormente, el uso del tipo any permite migrar gradualmente el código de JavaScript para usar tipos estáticos en TypeScript.
+
+El ejemplo siguiente declara una variable de tipo any y le asigna valores:
+
+```typescript
+let randomValue: any = 10;
+randomValue = 'Mateo';   // OK
+randomValue = true;      // OK
+```
+
+Cuando se compila este ejemplo, no se produce un error porque el tipo `any` abarca valores de todos los tipos posibles. El tipo `any` opta por no recibir la comprobación de tipos y no le obliga a realizar ninguna comprobación antes de llamar, construir o acceder a las propiedades de estos valores.
+
+El uso del tipo any en este ejemplo permite llamar a lo siguiente:
+
+- Una propiedad que no existe para el tipo.
+- `randomValue` como una función.
+- Método que solo se aplica a un tipo string.
+
+Dado que `randomValue` está registrado como `any`, todos los ejemplos siguientes son TypeScript válidos y no generarán un error en tiempo de compilación. Sin embargo, pueden producirse errores en tiempo de ejecución en función del tipo de datos real de la variable. Dado el ejemplo anterior, donde `randomValue` se establece en un valor booleano, las líneas de código siguientes generarán problemas en tiempo de ejecución:
+
+```typescript
+console.log(randomValue.name);  // Logs "undefined" to the console
+randomValue();                  // Returns "randomValue is not a function" error
+randomValue.toUpperCase();      // Returns "randomValue is not a function" error
+```
+
+> Importante
+>
+> Recuerde que toda la comodidad de any se produce a costa de perder seguridad de tipos. La seguridad de tipos es uno de los principales motivos para usar TypeScript. Debe evitar el uso de any cuando no sea necesario.
+
+### Tipo `unknown``
+
+Aunque es flexible, el tipo `any` puede producir errores inesperados. Para solucionar esto, TypeScript ha presentado el tipo `unknown`.
+
+El tipo `unknown` es similar al tipo `any` en que cualquier valor se puede asignar al tipo `unknown`. Sin embargo, no se puede acceder a las propiedades de un tipo `unknown`; tampoco se pueden llamar ni construir.
+
+En este ejemplo se cambia el tipo `any` del ejemplo anterior a `unknown`. Ahora generará errores de comprobación de tipos y evitará que compile el código hasta que tome las medidas adecuadas para resolverlos.
+
+```typescript
+let randomValue: unknown = 10;
+randomValue = true;
+randomValue = 'Mateo';
+
+console.log(randomValue.name);  // Error: Object is of type unknown
+randomValue();                  // Error: Object is of type unknown
+randomValue.toUpperCase();      // Error: Object is of type unknown
+```
+
+> Nota
+>
+>La diferencia principal entre `any` y `unknown` es que no puede interactuar con una variable de tipo `unknown`; si lo hace, se genera un error del compilador. `any` omite las comprobaciones en tiempo de compilación y el objeto se evalúa en tiempo de ejecución. Si el método o la propiedad existen, se comportará según lo esperado.
+
+### Aserción de tipos
+
+Si necesita tratar una variable como un tipo de datos diferente, puede usar una aserción de tipos. Una aserción de tipos indica a TypeScript que ha realizado cualquier comprobación especial que necesite antes de llamar a la instrucción. Indica al compilador "confíe en mí, sé lo que estoy haciendo". Una aserción de tipo es como una conversión de tipos en otros lenguajes, pero no realiza ninguna comprobación especial ni reestructuración de los datos. No tiene ningún impacto en el tiempo de ejecución y lo utiliza exclusivamente el compilador.
+
+Las aserciones de tipos tienen dos formatos. Una es la sintaxis de as:
+
+`(randomValue as string).toUpperCase();`
+
+La otra versión es la sintaxis de "corchetes angulares":
+
+`(<string>randomValue).toUpperCase();`
+
+> Nota
+>
+> `as` es la sintaxis preferida. Algunas aplicaciones de TypeScript, como JSX, pueden confundirse al usar `< >` para las conversiones de tipos.
+
+En el ejemplo siguiente se realiza la comprobación necesaria para determinar que randomValue es un elemento string antes de usar la aserción de tipos a fin de llamar al método toUpperCase.
+
+```typescript
+let randomValue: unknown = 10;
+
+randomValue = true;
+randomValue = 'Mateo';
+
+if (typeof randomValue === "string") {
+    console.log((randomValue as string).toUpperCase());    //* Returns MATEO to the console.
+} else {
+    console.log("Error - A string was expected here.");    //* Returns an error message.
+}
+```
+
+TypeScript ahora da por supuesto que ha realizado la comprobación necesaria. La aserción de tipos indica que `randomValue` se debe tratar como un elemento `string` y, después, se puede aplicar el método `toUpperCase`.
+
+### Restricciones de tipos
+
+En el ejemplo anterior se muestra el uso de `typeof` en el bloque `if` para examinar el tipo de una expresión en tiempo de ejecución. A esto se le llama restricción de tipos.
+
+Puede que esté familiarizado con el uso de `typeof` y `instanceof` en JavaScript para probar estas condiciones. TypeScript entiende estas condiciones y cambiará la inferencia de tipos en consecuencia cuando se use en un bloque `if`.
+
+Puede usar las condiciones siguientes para descubrir el tipo de una variable:
+
+| Tipo | Predicate |
+|------|-----------|
+|`string`|`typeof s === "string"`|
+|`number`|`typeof n === "number"`|
+|`boolean`|`typeof b === "boolean"`|
+|`undefined`|`typeof undefined === "undefined"`|
+|`function`|`typeof f === "function"`|
+|`array`|`Array.isArray(a)`|
+
+## Tipos de unión e intersección en TypeScript
+
+TypeScript proporciona opciones más avanzadas para declarar tipos. Los tipos de unión e intersección permiten controlar situaciones en las que un tipo se compone de dos o más tipos posibles, mientras que los tipos literales permiten restringir los valores asignados a un tipo a una lista reducida de opciones.
+
+### Tipos de unión
+
+Un tipo de unión describe un valor que puede ser uno de entre varios tipos. Esto puede ser útil cuando no tenga controlado un valor (por ejemplo, los valores de una biblioteca, una API o una entrada de usuario).
+
+El tipo `any` también puede aceptar tipos diferentes, así que ¿por qué querría usar un tipo de unión? Los tipos de unión restringen la asignación de valores a los tipos especificados, mientras que el tipo any no tiene restricciones. Otro motivo es la compatibilidad con IntelliSense.
+
+Un tipo de unión usa la barra vertical o pleca (`|`) para separar cada tipo. En el ejemplo siguiente, multiType puede ser un valor number o boolean:
+
+```typescript
+let multiType: number | boolean;
+multiType = 20;         //* Valid
+multiType = true;       //* Valid
+multiType = "twenty";   //* Invalid
+```
+
+Con las restricciones de tipos, puede trabajar fácilmente con una variable de un tipo de unión. En este ejemplo, la función _add_ acepta dos valores que pueden ser `number` o `string`. Si ambos valores son tipos numéricos, los agrega. Si ambos son tipos de cadena, los concatena. De lo contrario, genera un error.
+
+```typescript
+function add(x: number | string, y: number | string) {
+    if (typeof x === 'number' && typeof y === 'number') {
+        return x + y;
+    }
+    if (typeof x === 'string' && typeof y === 'string') {
+        return x.concat(y);
+    }
+    throw new Error('Parameters must be numbers or strings');
+}
+console.log(add('one', 'two'));  //* Returns "onetwo"
+console.log(add(1, 2));          //* Returns 3
+console.log(add('one', 2));      //* Returns error
+```
+
+### Tipos de intersección
+
+Los tipos de intersección están estrechamente relacionados con los tipos de unión, pero se usan de manera muy diferente. Un tipo de intersección combina dos o más tipos para crear uno que tiene todas las propiedades de los tipos existentes. Esto permite agregar tipos existentes de forma conjunta para obtener un tipo único que tenga todas las características que necesita.
+
+Un tipo de intersección usa el símbolo de y comercial (`&`) para separar cada tipo.
+
+Los tipos de intersección se usan con mayor frecuencia con las interfaces. En el ejemplo siguiente se definen dos interfaces, `Employee` y `Manager`, y luego se crea un tipo de intersección llamado `ManagementEmployee` que combina las propiedades en ambas interfaces.
+
+```typescript
+interface Employee {
+  employeeID: number;
+  age: number;
+}
+interface Manager {
+  stockPlan: boolean;
+}
+type ManagementEmployee = Employee & Manager;
+let newManager: ManagementEmployee = {
+    employeeID: 12345,
+    age: 34,
+    stockPlan: true
+};
+```
+
+Puede obtener más información sobre las interfaces en el módulo Implementación de interfaces en TypeScript.
+
+## Tipos literales
+
+Un literal es un subtipo más concreto de un tipo colectivo. Esto significa que `"Hello World"` es un elemento `string`, pero un elemento `string` no es `"Hello World"` dentro del sistema de tipos.
+
+Hay tres conjuntos de tipos literales disponibles en TypeScript: `string`, `number` y `boolean`. Mediante el uso de tipos literales, puede especificar un valor exacto que debe tener una cadena, un número o un valor booleano (por ejemplo, "yes", "no" o "maybe").
+
+### ¿Qué es la restricción literal?
+
+Cuando se declara una variable mediante `var` o `let` en TypeScript, se indica al compilador que existe la posibilidad de que esta variable cambie su contenido. Al declarar una variable con `let` se escribe la variable (por ejemplo, como un elemento `string`), lo que permite un número infinito de valores posibles.
+
+Por el contrario, al usar const para declarar una variable, informará a TypeScript de que este objeto nunca cambiará. Al declarar con tipos const, la escribe en el valor (por ejemplo, `"Hola mundo"`).
+
+El proceso de pasar de un número infinito de casos posibles a uno finito más pequeño se denomina restricción.
+
+### Definición de tipos literales
+
+Los tipos literales se escriben como objetos, matrices, funciones o literales de tipo constructor, y se usan para crear tipos a partir de otros.
+
+La mejor manera de mostrar el uso de los tipos literales es con un ejemplo. Esta definición de tipo crea un tipo literal denominado `testResult`, que puede contener uno de estos tres valores `string`:
+
+```typescript
+type testResult = "pass" | "fail" | "incomplete";
+let myResult: testResult;
+myResult = "incomplete";    //* Valid
+myResult = "pass";          //* Valid
+myResult = "failure";       //* Invalid
+```
+
+Al establecer el valor de la variable `myResult`, `"incomplete"` y `"pass"` son entradas válidas, a diferencia de `"failure"`, que no lo es porque no es uno de los elementos de la definición de tipo `testResult`.
+
+TypeScript también tiene tipos literales numéricos, que actúan igual que los literales de cadena anteriores. Por ejemplo:
+
+```typescript
+type dice = 1 | 2 | 3 | 4 | 5 | 6;
+let diceRoll: dice;
+diceRoll = 1;    //* Valid
+diceRoll = 2;    //* Valid
+diceRoll = 7;    //* Invalid
+```
+
+También puede usar valores `boolean` al definir tipos literales o cualquier combinación de tipos.
+
+## Matrices y Tuplas
+
+```typescript
+// Matrices y Tuplas
+
+// Primera forma de matrices
+let matArray: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+// Segunda forma de matrices
+let matArrayGeneric: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+// Tuplas
+
+let person1: [string, number] = ["Monica", 9];
+
+// let person2: [string, number] = ["John", 9, true]; Verá que se genera un error porque los elementos de la tupla array son fijos. 
+// La tupla person1 es una matriz que contiene exactamente un valor string y otro numeric.
+
+// let person3: [string, number] = [9, "Maria"]; Verá un error que indica que el orden de los valores debe coincidir con el orden de los tipos.
+```
