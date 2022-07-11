@@ -9,7 +9,7 @@
   - [Tipos de Objeto y Parametros de Tipo](#tipos-de-objeto-y-parámetros-de-tipo)
 - [Tipos Primitivos en TypeScript](#tipos-primitivos-en-typescript)
   - [Tipo Booleano](#tipo-booleano)
-  - [Tipos Numericos y BigInteger](#tipos-numéricos-y-biginteger)
+  - [Tipos Numericos y BigInteger](#tipos-numricos-y-biginteger)
   - [Tipo Cadena](#tipo-de-cadena)
   - [Tipos `void`, `null`, `undefined`](#los-tipos-void-null-y-undefined)
 - [Tipo Enumeracion](#el-tipo-de-enumeración)
@@ -19,7 +19,7 @@
   - [Tipo `unknown`](#tipo-unknown)
   - [Asercion de tipos](#aserción-de-tipos)
   - [Restriccion de tipos](#restricciones-de-tipos)
-- [Tipos de unión e intersección](#tipos-de-unión-e-intersección-en-typescript)
+- [Tipos de unión e intersección](#tipos-de-unin-e-interseccin-en-typescript)
   - [Tipos de unión](#tipos-de-unión)
   - [Tipos de intersección](#tipos-de-intersección)
 - [Tipos literales](#tipos-literales)
@@ -300,14 +300,14 @@ Puede que esté familiarizado con el uso de `typeof` y `instanceof` en JavaScrip
 
 Puede usar las condiciones siguientes para descubrir el tipo de una variable:
 
-| Tipo | Predicate |
-|------|-----------|
-|`string`|`typeof s === "string"`|
-|`number`|`typeof n === "number"`|
-|`boolean`|`typeof b === "boolean"`|
-|`undefined`|`typeof undefined === "undefined"`|
-|`function`|`typeof f === "function"`|
-|`array`|`Array.isArray(a)`|
+| Tipo        | Predicate                          |
+|-------------|------------------------------------|
+| `string`    | `typeof s === "string"`            |
+| `number`    | `typeof n === "number"`            |
+| `boolean`   | `typeof b === "boolean"`           |
+| `undefined` | `typeof undefined === "undefined"` |
+| `function`  | `typeof f === "function"`          |
+| `array`     | `Array.isArray(a)`                 |
 
 ## Tipos de unión e intersección en TypeScript
 
