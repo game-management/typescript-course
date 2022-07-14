@@ -48,7 +48,8 @@ for (let i = 0; i < headerVarArray.length; i++) {
 }
 let myIceCream = {
     flavor: 'vanilla',
-    scoops: 5
+    scoops: 5,
+    sauce: 'chocolate'
 };
 console.log(`My IceCream: ${myIceCream.flavor} --> ${myIceCream.scoops}`);
 function tooManyScoops(dessert) {
@@ -60,3 +61,4 @@ function tooManyScoops(dessert) {
     }
 }
 console.log(tooManyScoops(myIceCream));
+console.log(tooManyScoops({ flavor: 'vanilla', scoops: 5, sauce: 'caramel' }));

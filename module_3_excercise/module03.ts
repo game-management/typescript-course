@@ -78,8 +78,9 @@ let headerVarArray: Array<string> = payload.header.vars;
 for (let i=0; i < headerVarArray.length; i++) {
     console.log(`Header var: ${headerVarArray[i]}`);
 }
-
+/* ############################ */
 /* ### Ejercicio de Ejemplo ### */
+/* ############################ */
 
 interface IceCream {
     flavor: string;
@@ -87,14 +88,22 @@ interface IceCream {
     instructions?: string; // optional variable since ? is present
 }
 
-let myIceCream: IceCream = {
+interface Sundae extends IceCream {
+    sauce: 'chocolate' | 'caramel' | 'strawberry';
+    nuts?: boolean;
+    whippedCream?: boolean;
+    instructions?: string;
+}
+
+let myIceCream: Sundae = {
     flavor: 'vanilla',
-    scoops: 5
+    scoops: 5,
+    sauce: 'chocolate'
 }
 
 console.log(`My IceCream: ${myIceCream.flavor} --> ${myIceCream.scoops}`);
 
-function tooManyScoops(dessert: IceCream): string {
+function tooManyScoops(dessert: Sundae): string {
     if (dessert.scoops >= 4) {
         return `${dessert.scoops} is too many scoops`;
     } else {
@@ -103,3 +112,4 @@ function tooManyScoops(dessert: IceCream): string {
 }
 
 console.log(tooManyScoops(myIceCream));
+console.log(tooManyScoops({flavor: 'vanilla', scoops: 5, sauce: 'caramel'}));
