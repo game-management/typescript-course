@@ -7,6 +7,7 @@ Listado del curso oficial de Typescript
 - [Interfaces en Typescript](/docs/Interfaces.md)
 - [Funciones](/docs/Funciones.md)
 - [Clases](/docs/Clases.md)
+- [Generics](/docs/Generics.md)
 
 Informacion adicional:
 
