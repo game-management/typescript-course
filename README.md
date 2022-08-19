@@ -8,6 +8,7 @@ Listado del curso oficial de Typescript
 - [Funciones](/docs/Funciones.md)
 - [Clases](/docs/Clases.md)
 - [Generics](/docs/Generics.md)
+- [Modulos](/docs/Modulos.md)
 
 Informacion adicional:
 
